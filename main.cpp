@@ -3,7 +3,7 @@
 using namespace std;
 
     short turn = 0,position,rw,col,plr;
-    char xo ,e=254, cells[3][3]={
+    char xo ,e=254,currentCell, cells[3][3]={
         {e,e,e},
         {e,e,e},
         {e,e,e}
@@ -11,16 +11,14 @@ using namespace std;
 
 bool Winner(short rw,short col){
 
-    char currentCell=cells[rw][col];
+    if((currentCell==cells[rw][(col+1)%3]&&currentCell==cells[rw][(col+2)%3]) || (currentCell==cells[(rw+1)%3][col]&&currentCell==cells[(rw+2)%3][col]))
+        return true ;
+    else if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
+        if(rw==col)
+            return currentCell==cells[(rw+1)%3][(col+1)%3]&&currentCell==cells[(rw+2)%3][(col+2)%3];
 
-    if(currentCell==cells[rw][(col+1)%3]&&currentCell==cells[rw][(col+2)%3])
-        return true;
-    if(currentCell==cells[(rw+1)%3][col]&&currentCell==cells[(rw+2)%3][col])
-        return true;
-    if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
-        return (currentCell==cells[(rw+1)%3][(col+1)%3]&&currentCell==cells[(rw+2)%3][(col+2)%3]) || (currentCell==cells[(rw+2)%3][(col+1)%3]&&currentCell==cells[(rw+1)%3][(col+2)%3]);
+        return currentCell==cells[(rw+2)%3][(col+1)%3]&&currentCell==cells[(rw+1)%3][(col+2)%3];
     }
-
     return false;
 }
 
@@ -30,6 +28,7 @@ void PrintBoard(){
                 cout<<cells[i][j]<<" ";
             cout<<endl;
         }
+        cout<<endl;
 }
 
 int main()
@@ -49,13 +48,14 @@ int main()
             cout<<"Invalid inpute! "<<endl<<endl;
             continue;
         }
+        currentCell=cells[rw][col];
         PrintBoard();
     if(turn>=5&&Winner(rw,col)){
         cout<<"player "<<plr<<" won!"<<endl;
         break;
     }
     else if(turn==9)
-        cout<<"Draw";
+        cout<<"Draw"<<endl;
     }
     cout<<endl<<"GAME OVER"<<endl;
     return 0;
