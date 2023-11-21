@@ -17,12 +17,9 @@ bool Winner(short rw,short col){
         return true;
     if(currentCell==cells[(rw+1)%3][col]&&currentCell==cells[(rw+2)%3][col])
         return true;
-    if(rw==1&&col==1)
-        return (currentCell==cells[rw+1][col+1]&&currentCell==cells[rw-1][col-1])||(currentCell==cells[rw+1][col-1]&&currentCell==cells[rw-1][col+1]);
-    if((rw==0&&col==0)||(rw==2&&col==2))
-        return currentCell==cells[(rw+1)%3][(col+1)%3]&&currentCell==cells[(rw+2)%3][(col+2)%3];
-    if((rw==0&&col==2)||(rw==2&&col==0))
-        return currentCell==cells[(rw+2)%3][(col+1)%3]&&currentCell==cells[(rw+1)%3][(col+2)%3];
+    if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
+        return (currentCell==cells[(rw+1)%3][(col+1)%3]&&currentCell==cells[(rw+2)%3][(col+2)%3]) || (currentCell==cells[(rw+2)%3][(col+1)%3]&&currentCell==cells[(rw+1)%3][(col+2)%3]);
+    }
 
     return false;
 }
