@@ -13,7 +13,7 @@ bool Winner(short rw,short col){
 
     if((currentCell==cells[rw][(col+1)%3]&&currentCell==cells[rw][(col+2)%3]) || (currentCell==cells[(rw+1)%3][col]&&currentCell==cells[(rw+2)%3][col]))
         return true ;
-    else if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
+    if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
         if(rw==col)
             return currentCell==cells[(rw+1)%3][(col+1)%3]&&currentCell==cells[(rw+2)%3][(col+2)%3];
 
