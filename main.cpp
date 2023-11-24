@@ -3,7 +3,7 @@
 using namespace std;
 
     short turn = 0,position,rw,col,plr;
-    char xo ,e=254,currentCell, cells[3][3]={
+    char xo ,e=254,currentCell,sound=7, cells[3][3]={
         {e,e,e},
         {e,e,e},
         {e,e,e}
@@ -13,7 +13,7 @@ bool Winner(short rw,short col){
 
     if((currentCell==cells[rw][(col+1)%3]&&currentCell==cells[rw][(col+2)%3]) || (currentCell==cells[(rw+1)%3][col]&&currentCell==cells[(rw+2)%3][col]))
         return true ;
-    if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
+    else if((min(rw,col)==0&&max(rw,col)==2)||rw==col){
         if(rw==col)
             return currentCell==cells[(rw+1)%3][(col+1)%3]&&currentCell==cells[(rw+2)%3][(col+2)%3];
 
@@ -51,11 +51,11 @@ int main()
         currentCell=cells[rw][col];
         PrintBoard();
     if(turn>=5&&Winner(rw,col)){
-        cout<<"player "<<plr<<" won!"<<endl;
+        cout<<"player "<<plr<<" won!"<<sound<<endl;
         break;
     }
     else if(turn==9)
-        cout<<"Draw"<<endl;
+        cout<<"Draw"<<sound<<endl;
     }
     cout<<endl<<"GAME OVER"<<endl;
     return 0;
