@@ -2,12 +2,16 @@
 
 using namespace std;
 
-    short turn = 0,position,rw,col,plr;
-    char xo ,e=254,currentCell,sound=7, cells[3][3]={
-        {e,e,e},
-        {e,e,e},
-        {e,e,e}
-    };
+    short turn,position,rw,col,plr;
+    char xo ,e=254,currentCell,sound=7, cells[3][3];
+
+void Initialize_variables(){
+    turn = 0;
+    for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++)
+                cells[i][j]=e;
+    }
+}
 
 bool Winner(short rw,short col){
 
@@ -33,8 +37,11 @@ void PrintBoard(){
 
 int main()
 {
-    PrintBoard();
-    while(turn!=9){
+    char cont='y';
+    while(tolower(cont)=='y'){
+        Initialize_variables();
+        PrintBoard();
+        while(turn!=9){
         plr=turn%2+1;
         cout<<"player "<<plr<<" turn"<<endl;
         cin>>position;
@@ -45,18 +52,27 @@ int main()
             turn++;
         }
         else{
-            cout<<"Invalid inpute! "<<endl<<endl;
+            cout<<"Invalid inpute!"<<endl<<endl;
             continue;
         }
         currentCell=cells[rw][col];
         PrintBoard();
-    if(turn>=5&&Winner(rw,col)){
-        cout<<"player "<<plr<<" won!"<<sound<<endl;
-        break;
+        if(turn>=5&&Winner(rw,col)){
+            cout<<"player "<<plr<<" won!"<<sound<<endl;
+            break;
+        }
+        else if(turn==9)
+            cout<<"Draw"<<sound<<endl;
+        }
+        cout<<endl<<"GAME OVER"<<endl;
+        while(true){
+            cout<<"Play again? (y,n)"<<endl;
+            cin>>cont;
+            if(tolower(cont)=='n'||tolower(cont)=='y')
+                break;
+            else
+                cout<<"Invalid inpute!"<<endl<<endl;
+        }
     }
-    else if(turn==9)
-        cout<<"Draw"<<sound<<endl;
-    }
-    cout<<endl<<"GAME OVER"<<endl;
     return 0;
 }
