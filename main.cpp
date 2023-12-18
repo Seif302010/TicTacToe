@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -42,37 +43,47 @@ int main()
         Initialize_variables();
         PrintBoard();
         while(turn!=9){
-        plr=turn%2+1;
-        cout<<"player "<<plr<<" turn"<<endl;
-        cin>>position;
-        rw=(position-1)/3;col=(position-1)%3;
-        xo=turn%2==0?'X':'O';
-        if(cells[rw][col]==e&&(position>=1&&position<=9)){
-            cells[rw][col]=xo;
-            turn++;
-        }
-        else{
-            cout<<"Invalid inpute!"<<endl<<endl;
-            continue;
-        }
-        currentCell=cells[rw][col];
-        PrintBoard();
-        if(turn>=5&&Winner(rw,col)){
-            cout<<"player "<<plr<<" won!"<<sound<<endl;
-            break;
-        }
-        else if(turn==9)
-            cout<<"Draw"<<sound<<endl;
-        }
-        cout<<endl<<"GAME OVER"<<endl;
-        while(true){
-            cout<<"Play again? (y,n)"<<endl;
-            cin>>cont;
-            if(tolower(cont)=='n'||tolower(cont)=='y')
+            plr=turn%2+1;
+            cout<<"player "<<plr<<" turn"<<endl;
+            cin>>position;
+            rw=(position-1)/3;col=(position-1)%3;
+            xo=turn%2==0?'X':'O';
+            if (cin.fail()) {
+                cout<<"Invalid input! the input should be a number"<<endl<<endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                continue;
+            }
+            else if(position<1||position>9){
+                cout<<"The number should be in the range from 1 to 9"<<endl<<endl;
+                continue;
+            }
+            else if(cells[rw][col]!=e){
+                cout<<"The selected square is not empty"<<endl<<endl;
+                continue;
+            }
+            else{
+                cells[rw][col]=xo;
+                turn++;
+            }
+            currentCell=cells[rw][col];
+            PrintBoard();
+            if(turn>=5&&Winner(rw,col)){
+                cout<<"player "<<plr<<" won!"<<sound<<endl;
                 break;
-            else
-                cout<<"Invalid inpute!"<<endl<<endl;
-        }
+            }
+            else if(turn==9)
+                cout<<"Draw"<<sound<<endl;
+            }
+            cout<<endl<<"GAME OVER"<<endl;
+            while(true){
+                cout<<"Play again? (y,n)"<<endl;
+                cin>>cont;
+                if(tolower(cont)=='n'||tolower(cont)=='y')
+                    break;
+                else
+                    cout<<"Invalid input!"<<endl<<endl;
+            }
     }
     return 0;
 }
