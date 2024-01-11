@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <limits>
 using namespace std;
 
     short turn,position,rw,col,plr;
