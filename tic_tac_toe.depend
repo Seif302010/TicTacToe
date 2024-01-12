@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1702886730 source:d:\cpp\tic_tac_toe\main.cpp
-	<bits/stdc++.h>
+1705084399 source:d:\cpp\tic_tac_toe\main.cpp
+	<iostream>
+	<limits>
 
 1702875028 source:d:\cpp\tic_tac_toe\addicon.rc
 

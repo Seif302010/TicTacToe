@@ -6,6 +6,7 @@ using namespace std;
     char xo ,e=254,currentCell,sound=7, cells[3][3];
 
 void Initialize_variables(){
+    system("cls");
     turn = 0;
     for(int i=0;i<3;i++){
             for(int j=0;j<3;j++)
@@ -66,6 +67,7 @@ int main()
                 turn++;
             }
             currentCell=cells[rw][col];
+            system("cls");
             PrintBoard();
             if(turn>=5&&Winner(rw,col)){
                 cout<<"player "<<plr<<" won!"<<sound<<endl;
