@@ -8,4 +8,4 @@ X for player 1 and O for player 2.
 
 The game ends with either one of the players winning or the game ends in a draw after turn 9.
 
-Downloads: [Here](https://github.com/Seif302010/TicTacToe/releases/)
+Download the latest release from [Here](https://github.com/Seif302010/TicTacToe/releases/latest)
