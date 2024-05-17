@@ -46,7 +46,11 @@ void printBoard()
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
+#ifdef _WIN32
             cout << cells[i][j] << " ";
+#else
+            cout << (cells[i][j] == e ? "\u25a0" : string(1, cells[i][j])) << " ";
+#endif
         cout << endl;
     }
     cout << endl;
