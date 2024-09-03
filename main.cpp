@@ -3,13 +3,15 @@
 
 #ifdef _WIN32
 #define CLEAR_SCREEN "cls"
+#define SQUARE string(1,char(254))
 #else
 #define CLEAR_SCREEN "clear"
+#define SQUARE "\u25a0"
 #endif
 using namespace std;
 
 short turn, position, rw, col, plr;
-char xo, e = 254, sound = 7, cells[3][3];
+string xo, e = SQUARE, sound = string(1,char(7)), cells[3][3];
 
 void clearScreen()
 {
@@ -46,11 +48,7 @@ void printBoard()
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
-#ifdef _WIN32
             cout << cells[i][j] << " ";
-#else
-            cout << (cells[i][j] == e ? "\u25a0" : string(1, cells[i][j])) << " ";
-#endif
         cout << endl;
     }
     cout << endl;
@@ -76,7 +74,7 @@ int main()
             cin >> position;
             rw = (position - 1) / 3;
             col = (position - 1) % 3;
-            xo = turn % 2 == 0 ? 'X' : 'O';
+            xo = turn % 2 == 0 ? "X" : "O";
             if (cin.fail())
             {
                 cout << "Invalid input! the input should be a number" << endl
