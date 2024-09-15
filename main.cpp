@@ -3,7 +3,7 @@
 
 #ifdef _WIN32
 #define CLEAR_SCREEN "cls"
-#define SQUARE string(1,char(254))
+#define SQUARE string(1, char(254))
 #else
 #define CLEAR_SCREEN "clear"
 #define SQUARE "\u25a0"
@@ -11,7 +11,7 @@
 using namespace std;
 
 short turn, position, rw, col, plr;
-string xo, e = SQUARE, sound = string(1,char(7)), cells[3][3];
+string e = SQUARE, sound = string(1, char(7)), cells[3][3];
 
 void clearScreen()
 {
@@ -30,15 +30,15 @@ void Initialize_variables()
 
 bool Winner(short &rw, short &col)
 {
-
-    if ((xo == cells[rw][(col + 1) % 3] && xo == cells[rw][(col + 2) % 3]) || (xo == cells[(rw + 1) % 3][col] && xo == cells[(rw + 2) % 3][col]))
+    const char *cell = (cells[rw][col]).c_str();
+    if ((cell == cells[rw][(col + 1) % 3] && cell == cells[rw][(col + 2) % 3]) || (cell == cells[(rw + 1) % 3][col] && cell == cells[(rw + 2) % 3][col]))
         return true;
     else if ((min(rw, col) == 0 && max(rw, col) == 2) || rw == col)
     {
         if (rw == col)
-            return xo == cells[(rw + 1) % 3][(col + 1) % 3] && xo == cells[(rw + 2) % 3][(col + 2) % 3];
+            return cell == cells[(rw + 1) % 3][(col + 1) % 3] && cell == cells[(rw + 2) % 3][(col + 2) % 3];
 
-        return xo == cells[(rw + 2) % 3][(col + 1) % 3] && xo == cells[(rw + 1) % 3][(col + 2) % 3];
+        return cell == cells[(rw + 2) % 3][(col + 1) % 3] && cell == cells[(rw + 1) % 3][(col + 2) % 3];
     }
     return false;
 }
@@ -63,6 +63,7 @@ void reprint()
 int main()
 {
     char replay = 'y';
+    const char xo[] = "XO";
     while (replay == 'y')
     {
         Initialize_variables();
@@ -74,7 +75,6 @@ int main()
             cin >> position;
             rw = (position - 1) / 3;
             col = (position - 1) % 3;
-            xo = turn % 2 == 0 ? "X" : "O";
             if (cin.fail())
             {
                 cout << "Invalid input! the input should be a number" << endl
@@ -97,7 +97,7 @@ int main()
             }
             else
             {
-                cells[rw][col] = xo;
+                cells[rw][col] = xo[turn % 2];
                 turn++;
             }
             reprint();
