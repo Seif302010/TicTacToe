@@ -1,56 +1,77 @@
 #include <iostream>
 #include <limits>
+#include <cstring>
 
 #ifdef _WIN32
 #define CLEAR_SCREEN "cls"
-#define SQUARE string(1, char(254))
+#define SQUARE string(1, char(254)).c_str()
 #else
 #define CLEAR_SCREEN "clear"
-#define SQUARE "\u25a0"
+#define SQUARE string("\u25a0").c_str()
 #endif
 using namespace std;
 
 short turn, position, rw, col, plr;
-string e = SQUARE, sound = string(1, char(7)), cells[3][3];
+const char *xo[2] = {"X", "O"};
+string sound = string(1, char(7));
+char *cells[3][3];
 
 void clearScreen()
 {
     system(CLEAR_SCREEN);
 }
 
+void itterateArray(void (*func)(short, short))
+{
+    for (short i = 0; i < 3; i++)
+    {
+        for (short j = 0; j < 3; j++)
+        {
+            func(i, j);
+        }
+    }
+}
+
+void allocateMemmory()
+{
+    itterateArray([](short i, short j)
+                  { cells[i][j] = new char[strlen(SQUARE) + 1]; });
+}
+
+void freeMemory()
+{
+    itterateArray([](short i, short j)
+                  { delete[] cells[i][j]; });
+}
+
 void Initialize_variables()
 {
     turn = 0;
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-            cells[i][j] = e;
-    }
+    itterateArray([](short i, short j)
+                  { strcpy(cells[i][j], SQUARE); });
 }
 
 bool Winner(short &rw, short &col)
 {
-    const char *cell = (cells[rw][col]).c_str();
-    if ((cell == cells[rw][(col + 1) % 3] && cell == cells[rw][(col + 2) % 3]) || (cell == cells[(rw + 1) % 3][col] && cell == cells[(rw + 2) % 3][col]))
+    const char *cell = cells[rw][col];
+    if ((strcmp(cell, cells[rw][(col + 1) % 3]) == 0 && strcmp(cell, cells[rw][(col + 2) % 3]) == 0) ||
+        (strcmp(cell, cells[(rw + 1) % 3][col]) == 0 && strcmp(cell, cells[(rw + 2) % 3][col]) == 0))
         return true;
     else if ((min(rw, col) == 0 && max(rw, col) == 2) || rw == col)
     {
         if (rw == col)
-            return cell == cells[(rw + 1) % 3][(col + 1) % 3] && cell == cells[(rw + 2) % 3][(col + 2) % 3];
+            return strcmp(cell, cells[(rw + 1) % 3][(col + 1) % 3]) == 0 && strcmp(cell, cells[(rw + 2) % 3][(col + 2) % 3]) == 0;
 
-        return cell == cells[(rw + 2) % 3][(col + 1) % 3] && cell == cells[(rw + 1) % 3][(col + 2) % 3];
+        return strcmp(cell, cells[(rw + 2) % 3][(col + 1) % 3]) == 0 && strcmp(cell, cells[(rw + 1) % 3][(col + 2) % 3]) == 0;
     }
     return false;
 }
 
 void printBoard()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-            cout << cells[i][j] << " ";
-        cout << endl;
-    }
+    itterateArray([](short i, short j)
+                  { cout << cells[i][j] << " ";
+        if (j == 2) cout << endl; });
     cout << endl;
 }
 
@@ -62,8 +83,8 @@ void reprint()
 
 int main()
 {
+    allocateMemmory();
     char replay = 'y';
-    const char xo[] = "XO";
     while (replay == 'y')
     {
         Initialize_variables();
@@ -89,7 +110,7 @@ int main()
                      << endl;
                 continue;
             }
-            else if (cells[rw][col] != e)
+            else if (strcmp(cells[rw][col], SQUARE) != 0)
             {
                 cout << "The selected square is not empty" << endl
                      << endl;
@@ -97,7 +118,7 @@ int main()
             }
             else
             {
-                cells[rw][col] = xo[turn % 2];
+                strcpy(cells[rw][col], xo[turn % 2]);
                 turn++;
             }
             reprint();
@@ -126,5 +147,6 @@ int main()
                      << endl;
         }
     }
+    freeMemory();
     return 0;
 }
