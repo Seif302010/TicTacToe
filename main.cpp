@@ -3,6 +3,7 @@
 #include <cstring>
 
 #ifdef _WIN32
+#include <windows.h>
 #define CLEAR_SCREEN "cls"
 #define SQUARE string(1, char(254)).c_str()
 #else
@@ -11,67 +12,60 @@
 #endif
 using namespace std;
 
-short turn, position, rw, col, plr;
-const char *xo[2] = {"X", "O"};
+short turn;
+const char *row;
 string sound = string(1, char(7));
-char *cells[3][3];
+char *cells[3];
 
 void clearScreen()
 {
     system(CLEAR_SCREEN);
 }
 
-void itterateArray(void (*func)(short, short))
+void itterateArray(void (*func)(short))
 {
     for (short i = 0; i < 3; i++)
     {
-        for (short j = 0; j < 3; j++)
-        {
-            func(i, j);
-        }
+        func(i);
     }
 }
 
 void allocateMemmory()
 {
-    itterateArray([](short i, short j)
-                  { cells[i][j] = new char[strlen(SQUARE) + 1]; });
+    itterateArray([](short i)
+                  { cells[i] = new char[strlen(row) + 1]; });
 }
 
 void freeMemory()
 {
-    itterateArray([](short i, short j)
-                  { delete[] cells[i][j]; });
+    itterateArray([](short i)
+                  { delete[] cells[i]; });
 }
 
 void Initialize_variables()
 {
     turn = 0;
-    itterateArray([](short i, short j)
-                  { strcpy(cells[i][j], SQUARE); });
+    itterateArray([](short i)
+                  { strcpy(cells[i], row); });
 }
 
-bool Winner(short &rw, short &col)
+bool Winner(const short &rw, const short &col, const short &rowLenght, const short &step)
 {
-    const char *cell = cells[rw][col];
-    if ((strcmp(cell, cells[rw][(col + 1) % 3]) == 0 && strcmp(cell, cells[rw][(col + 2) % 3]) == 0) ||
-        (strcmp(cell, cells[(rw + 1) % 3][col]) == 0 && strcmp(cell, cells[(rw + 2) % 3][col]) == 0))
+    string currentRow = cells[rw];
+    char cell = cells[rw][col];
+    if ((cell == cells[rw][(col + step) % rowLenght] && cell == cells[rw][(col + step * 2) % rowLenght]) ||
+        (cell == cells[(rw + 1) % 3][col] && cell == cells[(rw + 2) % 3][col]))
         return true;
-    else if ((min(rw, col) == 0 && max(rw, col) == 2) || rw == col)
-    {
-        if (rw == col)
-            return strcmp(cell, cells[(rw + 1) % 3][(col + 1) % 3]) == 0 && strcmp(cell, cells[(rw + 2) % 3][(col + 2) % 3]) == 0;
-
-        return strcmp(cell, cells[(rw + 2) % 3][(col + 1) % 3]) == 0 && strcmp(cell, cells[(rw + 1) % 3][(col + 2) % 3]) == 0;
-    }
+    else if ((min(rw, col) == 0 && max(rw, short(col / step)) == 2) || rw == col / step)
+        return rw == col / step ? (cell == cells[(rw + 1) % 3][(col + step) % rowLenght] && cell == cells[(rw + 2) % 3][(col + step * 2) % rowLenght])
+                                : (cell == cells[(rw + 2) % 3][(col + step) % rowLenght] && cell == cells[(rw + 1) % 3][(col + step * 2) % rowLenght]);
     return false;
 }
 
 void printBoard()
 {
-    itterateArray([](short i, short j)
-                  { cout << cells[i][j] << " ";
-        if (j == 2) cout << endl; });
+    itterateArray([](short i)
+                  { cout << cells[i] << endl; });
     cout << endl;
 }
 
@@ -83,6 +77,10 @@ void reprint()
 
 int main()
 {
+    short position, rw, col, plr;
+    const char xo[2] = {'X', 'O'}, *e = SQUARE;
+    row = (string(e) + ' ' + e + ' ' + e).c_str();
+    short rowLength = strlen(row) + 1, step = rowLength / 3;
     allocateMemmory();
     char replay = 'y';
     while (replay == 'y')
@@ -95,7 +93,7 @@ int main()
             cout << "player " << plr << " turn" << endl;
             cin >> position;
             rw = (position - 1) / 3;
-            col = (position - 1) % 3;
+            col = ((position - 1) * step) % rowLength;
             if (cin.fail())
             {
                 cout << "Invalid input! the input should be a number" << endl
@@ -110,19 +108,20 @@ int main()
                      << endl;
                 continue;
             }
-            else if (strcmp(cells[rw][col], SQUARE) != 0)
+            else if (cells[rw][col] != *e)
             {
                 cout << "The selected square is not empty" << endl
                      << endl;
+                cout << "current cell: " << cells[rw][col] << endl;
                 continue;
             }
             else
             {
-                strcpy(cells[rw][col], xo[turn % 2]);
+                cells[rw][col] = xo[turn % 2];
                 turn++;
             }
             reprint();
-            if (turn >= 5 && Winner(rw, col))
+            if (turn >= 5 && Winner(rw, col, rowLength, step))
             {
                 cout << "player " << plr << " won!" << endl;
                 break;
