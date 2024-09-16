@@ -51,7 +51,6 @@ void Initialize_variables()
 
 bool Winner(const short &rw, const short &col, const short &rowLenght, const short &step)
 {
-    string currentRow = cells[rw];
     char cell = cells[rw][col];
     if ((cell == cells[rw][(col + step) % rowLenght] && cell == cells[rw][(col + step * 2) % rowLenght]) ||
         (cell == cells[(rw + 1) % 3][col] && cell == cells[(rw + 2) % 3][col]))
