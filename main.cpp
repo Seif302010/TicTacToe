@@ -17,6 +17,28 @@ const char *row;
 string sound = string(1, char(7));
 char *cells[3];
 
+void moveCursorTo(const short &row, const short &column)
+{
+#ifdef _WIN32
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {static_cast<SHORT>(column), static_cast<SHORT>(row)});
+#else
+    cout << "\033[" << (row + 1) << ";" << (column + 1) << "H";
+#endif
+}
+
+void clearFromCursor()
+{
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD cellsWritten;
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    FillConsoleOutputCharacter(hConsole, (TCHAR)' ', csbi.dwSize.X * csbi.dwSize.Y, csbi.dwCursorPosition, &cellsWritten);
+#else
+    cout << "\033[J";
+#endif
+}
+
 void clearScreen()
 {
     system(CLEAR_SCREEN);
@@ -74,6 +96,15 @@ void reprint()
     printBoard();
 }
 
+void updateCells(const short &row, const short &column, const short &step, const char &newCell)
+{
+    moveCursorTo(row, (column / step) * 2);
+    cout << newCell;
+    moveCursorTo(3, 0);
+    clearFromCursor();
+    cout << endl;
+}
+
 int main()
 {
     short position, rw, col, plr;
@@ -88,8 +119,8 @@ int main()
         reprint();
         while (turn < 9)
         {
-            plr = turn % 2 + 1;
-            cout << "player " << plr << " turn" << endl;
+            plr = turn % 2;
+            cout << "player " << (plr + 1) << " turn" << endl;
             cin >> position;
             rw = (position - 1) / 3;
             col = ((position - 1) * step) % rowLength;
@@ -111,18 +142,17 @@ int main()
             {
                 cout << "The selected square is not empty" << endl
                      << endl;
-                cout << "current cell: " << cells[rw][col] << endl;
                 continue;
             }
             else
             {
-                cells[rw][col] = xo[turn % 2];
+                cells[rw][col] = xo[plr];
                 turn++;
             }
-            reprint();
+            updateCells(rw, col, step, xo[plr]);
             if (turn >= 5 && Winner(rw, col, rowLength, step))
             {
-                cout << "player " << plr << " won!" << endl;
+                cout << "player " << plr + 1 << " won!" << endl;
                 break;
             }
             else if (turn == 9)
