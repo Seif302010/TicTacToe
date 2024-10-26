@@ -7,8 +7,9 @@
 
 1702878628 source:d:\cpp\tictactoe\addicon.rc
 
-1726387636 source:d:\cpp\tictactoe\main.cpp
+1729972828 source:d:\cpp\tictactoe\main.cpp
 	<iostream>
 	<limits>
 	<cstring>
+	<windows.h>
 

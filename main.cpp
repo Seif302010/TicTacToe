@@ -5,17 +5,18 @@
 #ifdef _WIN32
 #include <windows.h>
 #define CLEAR_SCREEN "cls"
-#define SQUARE string(1, char(254)).c_str()
+#define SQUARE "\xfe"
 #else
 #define CLEAR_SCREEN "clear"
-#define SQUARE string("\u25a0").c_str()
+#define SQUARE "\u25a0"
 #endif
 using namespace std;
 
 short turn;
-const char *row;
 string sound = string(1, char(7));
-char *cells[3];
+const char e[] = SQUARE;
+const short rLength = strlen(e) * 3 + 3;
+char cells[3][rLength],row[rLength];
 
 void moveCursorTo(const short &row, const short &column)
 {
@@ -50,18 +51,6 @@ void itterateArray(void (*func)(short))
     {
         func(i);
     }
-}
-
-void allocateMemmory()
-{
-    itterateArray([](short i)
-                  { cells[i] = new char[strlen(row) + 1]; });
-}
-
-void freeMemory()
-{
-    itterateArray([](short i)
-                  { delete[] cells[i]; });
 }
 
 void Initialize_variables()
@@ -108,10 +97,9 @@ void updateCells(const short &row, const short &column, const short &step, const
 int main()
 {
     short position, rw, col, plr;
-    const char xo[2] = {'X', 'O'}, *e = SQUARE;
-    row = (string(e) + ' ' + e + ' ' + e).c_str();
-    short rowLength = strlen(row) + 1, step = rowLength / 3;
-    allocateMemmory();
+    const char xo[2] = {'X', 'O'};
+    snprintf(row, rLength, "%s %s %s", e, e, e);
+    short step = rLength / 3;
     char replay = 'y';
     while (replay == 'y')
     {
@@ -123,7 +111,7 @@ int main()
             cout << "player " << (plr + 1) << " turn" << endl;
             cin >> position;
             rw = (position - 1) / 3;
-            col = ((position - 1) * step) % rowLength;
+            col = ((position - 1) * step) % rLength;
             if (cin.fail())
             {
                 cout << "Invalid input! the input should be a number" << endl
@@ -150,7 +138,7 @@ int main()
                 turn++;
             }
             updateCells(rw, col, step, xo[plr]);
-            if (turn >= 5 && Winner(rw, col, rowLength, step))
+            if (turn >= 5 && Winner(rw, col, rLength, step))
             {
                 cout << "player " << plr + 1 << " won!" << endl;
                 break;
@@ -175,6 +163,5 @@ int main()
                      << endl;
         }
     }
-    freeMemory();
     return 0;
 }
